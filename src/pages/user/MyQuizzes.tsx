@@ -76,23 +76,23 @@ const MyQuizzes = () => {
                 {quiz.quizId?.title}
               </h2>
               <p className="text-gray-400 mb-2">
-                Category: {quiz.quizId.category}
+                Category: {quiz.quizId?.category}
               </p>
               <div className="flex items-center justify-between">
                 {quiz.score !== null ? (
                   <div className="flex items-center gap-2">
                     <FaStar className="text-yellow-400" />
-                    <span className="font-semibold">Score: {quiz.score}%</span>
+                    <span className="font-semibold">Score: {quiz?.score}%</span>
                   
                   </div>
                 ) : (
-                  <span className="text-gray-400">{quiz.quizId.status}</span>
+                  <span className="text-gray-400">{quiz.quizId?.status}</span>
                 )}
 
                 <button
                   className="cursor-default px-4 py-2 bg-indigo-500 text-white rounded-lg hover:bg-indigo-600 transition"
                 >
-                  {quiz.status === 'Completed' ? 'Retake' : 'Completed'}
+                  {quiz?.status === 'Completed' ? 'Retake' : 'Completed'}
                 </button>
               </div>
             </motion.div>
