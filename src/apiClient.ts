@@ -29,7 +29,7 @@ export type LeaderboardType = {
   score: number
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+const API_BASE_URL = 'https://quizver-api.onrender.com'
 
 export const register = async (formData: RegisterFormData) => {
   const response = await fetch(`${API_BASE_URL}/auth/register`, {
