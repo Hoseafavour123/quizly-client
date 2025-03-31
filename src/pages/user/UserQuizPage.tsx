@@ -45,7 +45,7 @@ const UserQuizPage = () => {
 
   const { mutate } = useMutation(apiUser.submitQuiz, {
     onSuccess: () => {
-      navigate(`/all-quizzes`)
+      navigate(`/my-quizzes`)
     },
   })
 
@@ -148,29 +148,36 @@ const UserQuizPage = () => {
   }
 
   const handleSubmit = () => {
-   const payload = {
-     userId: user?._id,
-     quizId: quiz._id,
-     totalQuestions: quiz.questions.length,
-     answers: {} as Record<string, string>, // Store answers as a JSON object
-     score: 0,
-   }
-
-   let correctCount = 0
-   quiz.questions.forEach((q: any, i: number) => {
-     const isCorrect = q.correctAnswer === selectedAnswers[i]
-     if (isCorrect) correctCount++
-     payload.answers[i] = selectedAnswers[i] || '' // Store selected answers
-   })
-
-   payload.score = correctCount
-   console.log(payload)
-
-   mutate(payload)
-
-    sessionStorage.setItem('quizSubmitted', 'true')
-    setShowResults(true)
+  const payload = {
+    userId: user?._id,
+    quizId: quiz._id,
+    totalQuestions: quiz.questions.length,
+    answers: {} as Record<string, string>,
+    score: 0,
   }
+
+  let correctCount = 0
+  quiz.questions.forEach((q: any, i: number) => {
+    const selectedOption = selectedAnswers[i] || '' // Ensure a default value
+    const correctOptionLetter = getOptionLetter(i, q.correctAnswer)
+    const selectedOptionLetter = getOptionLetter(i, selectedOption)
+
+    if (correctOptionLetter === selectedOptionLetter) {
+      correctCount++
+    }
+
+    payload.answers[i] = selectedOptionLetter || ''
+  })
+
+  payload.score = correctCount
+  console.log(payload)
+
+  mutate(payload)
+
+  sessionStorage.setItem('quizSubmitted', 'true')
+  setShowResults(true)
+}
+
 
   const formatTime = (seconds: number | null) => {
     if (seconds === null) return '00:00'

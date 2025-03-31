@@ -20,7 +20,6 @@ export interface StatsData {
 }
 
 
-
 export type LeaderboardType = {
   id: string
   email:string
