@@ -9,7 +9,7 @@ import Loader1 from '../../components/Loader1'
 import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../../context/AuthContext'
 
-const socket = io('http://localhost:4004', { transports: ['websocket'] })
+const socket = io('https://quizver-api.onrender.com', { transports: ['websocket'] })
 
 const UserQuizPage = () => {
  
@@ -34,6 +34,7 @@ const UserQuizPage = () => {
   const { user } = useAuthContext()
   const [timeLeft, setTimeLeft] = useState<number | null>(null)
   const [currentQuestion, setCurrentQuestion] = useState(0)
+  const [score, setScore] = useState(0)
   const [selectedAnswers, setSelectedAnswers] = useState<
     Record<number, string>
   >({})
@@ -170,7 +171,7 @@ const UserQuizPage = () => {
   })
 
   payload.score = correctCount
-  console.log(payload)
+  setScore(payload.score)
 
   mutate(payload)
 
@@ -187,16 +188,6 @@ const UserQuizPage = () => {
       2,
       '0'
     )}`
-  }
-
-  const calculateScore = () => {
-    return quiz.questions.reduce(
-      (score: number, question: { correctAnswer: string }, index: number) => {
-        const optionLetter = getOptionLetter(index, selectedAnswers[index])
-        return optionLetter === question.correctAnswer ? score + 1 : score
-      },
-      0
-    )
   }
 
   const getOptionLetter = (questionIndex: number, optionText: string) => {
@@ -235,7 +226,6 @@ const UserQuizPage = () => {
   }
 
   if (showResults) {
-    const score = calculateScore()
     const totalQuestions = quiz.questions.length
     const percentage = Math.round((score / totalQuestions) * 100)
 
