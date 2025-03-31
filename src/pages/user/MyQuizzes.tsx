@@ -73,7 +73,7 @@ const MyQuizzes = () => {
               className="cursor-pointer bg-neutral-900 p-5 rounded-lg shadow-lg hover:shadow-indigo-500/50 transition"
             >
               <h2 className="text-xl font-semibold mb-2">
-                {quiz.quizId.title}
+                {quiz.quizId?.title}
               </h2>
               <p className="text-gray-400 mb-2">
                 Category: {quiz.quizId.category}
