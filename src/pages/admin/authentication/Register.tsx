@@ -4,7 +4,7 @@ import { useMutation } from 'react-query'
 import { Link, useNavigate } from 'react-router-dom'
 import * as apiAdmin from '../../../apiAdmin'
 import { useAppContext } from '../../../context/AppContext'
-import { FaBrain } from 'react-icons/fa'
+import { appInfo } from '../../../constants/app.info'
 
 export interface RegisterFormData {
   name: string
@@ -41,13 +41,11 @@ const AdminRegister: React.FC = () => {
 
   return (
     <div className="font-montserrat mx-auto flex max-md:flex-col justify-center items-center gap-5 min-h-screen">
-      <div className="md:w-[30%]">
-        <FaBrain className="text-9xl text-indigo-500" />
-        <h1 className="bg-gradient-to-r from-indigo-500 via-pink-400 to-pink-500 text-transparent bg-clip-text text-6xl max-md:text-4xl font-semibold">
-          Quizly
-        </h1>
-        <p>Take a quiz and earn!</p>
-      </div>
+      <div className="flex flex-col items-center md:w-[30%]">
+            <img src={appInfo.logo} className="w-60" alt="" />
+            <em>Take a quiz and earn!</em>
+          </div>
+    
 
       <div className="md:w-[30%] mt-10 p-6 bg-white rounded-lg shadow-md">
         <h2 className="text-2xl font-bold mb-6 text-center">
@@ -129,13 +127,10 @@ const AdminRegister: React.FC = () => {
             type="submit"
             className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
               isLoading
-                ? 'bg-indigo-400 cursor-not-allowed'
-                : 'bg-indigo-600 focus:ring-indigo-500 hover:bg-indigo-700 '
+                ? 'bg-[#E706E5] opacity-50 cursor-not-allowed'
+                : 'bg-[#E706E5] hover:opacity-80'
             }  focus:outline-none focus:ring-2 focus:ring-offset-2 `}
-          >
-            {isLoading ? 'Processing...' : 'Register'}
-          </button>
-
+          >Register</button>
           {/* Already Registered Link */}
           <p className="text-sm">
             Already in?{' '}

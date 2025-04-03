@@ -56,7 +56,7 @@ const ResetAdminPasswordForm = ({ code }: ResetPasswordFormProps) => {
 
                 <Link
                   to="/admin/login"
-                  className="mt-4 inline-block bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-4 rounded transition"
+                  className="mt-4 inline-block bg-[#E706E5] hover:opacity-80 text-white py-2 px-4 rounded transition"
                 >
                   Go to Login
                 </Link>
@@ -122,7 +122,7 @@ const ResetAdminPasswordForm = ({ code }: ResetPasswordFormProps) => {
               <button
                 type="submit"
                 className={`w-full py-2 px-4 rounded text-white font-medium ${
-                  isLoading ? 'bg-gray-400' : 'bg-blue-500 hover:bg-blue-600'
+                  isLoading ? 'bg-gray-400' : 'bg-[#E706E5] hover:opacity-80'
                 } transition`}
                 disabled={isLoading}
               >

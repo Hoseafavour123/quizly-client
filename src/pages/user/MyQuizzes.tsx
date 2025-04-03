@@ -102,7 +102,7 @@ const MyQuizzes = () => {
       </div>
 
       {/* Pagination Controls */}
-      <div className="mt-6 flex justify-center gap-4">
+        <div className="mt-6 flex justify-center gap-4">
         <button
           onClick={() => setPage((prev) => Math.max(prev - 1, 1))}
           disabled={page === 1}
@@ -110,10 +110,10 @@ const MyQuizzes = () => {
         >
           Previous
         </button>
-        <span className="text-lg text-white">Page {page}</span>
+        <span className="text-lg text-white">Page {data.currentPage}</span>
         <button
           onClick={() => setPage((prev) => prev + 1)}
-          disabled={!data.hasMore}
+          disabled={data.quizzes.length < 10} 
           className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 disabled:opacity-50"
         >
           Next

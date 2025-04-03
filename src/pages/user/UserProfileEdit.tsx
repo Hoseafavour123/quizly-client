@@ -125,9 +125,9 @@ const UpdateUserProfile: React.FC = () => {
             type="submit"
             className={`w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white ${
               isLoading
-                ? 'bg-indigo-400 cursor-not-allowed'
-                : 'bg-indigo-600 focus:ring-indigo-500 hover:bg-indigo-700'
-            } focus:outline-none focus:ring-2 focus:ring-offset-2`}
+                ? 'bg-[#E706E5] opacity-50 cursor-not-allowed'
+                : 'bg-[#E706E5] hover:opacity-80'
+            }`}
           >
             {isLoading ? 'Processing...' : 'Update Profile'}
           </button>

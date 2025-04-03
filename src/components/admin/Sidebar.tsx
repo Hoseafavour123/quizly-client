@@ -8,6 +8,7 @@ import {
   FaEdit,
   FaQuestion,
 } from 'react-icons/fa'
+import { appInfo } from '../../constants/app.info'
 
 type SidebarProps = {
   isOpen: boolean
@@ -29,10 +30,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
               to={'/'}
               className="text-3xl font-bold flex items-center gap-2"
             >
-              <FaBrain className="text-4xl text-indigo-500" />
-              <h1 className="bg-gradient-to-r from-indigo-500 via-pink-400 to-pink-500 text-transparent bg-clip-text text-4xl font-semibold">
-                Quizly
-              </h1>
+            <img src={appInfo.logo} className="w-full h-[70px]" alt="" />
             </Link>
             <button onClick={toggleSidebar} className="lg:hidden">
               <FaTimes size={24} />

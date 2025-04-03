@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { useMutation } from 'react-query'
 import * as apiClient from '../../../apiClient'
 import { Link } from 'react-router-dom'
-import { FaBrain } from 'react-icons/fa'
+import { appInfo } from '../../../constants/app.info'
 
 export type ForgotPasswordFormData = {
   email: string
@@ -32,12 +32,11 @@ const ForgotPassword: React.FC = () => {
 
   return (
     <div className="font-montserrat flex max-md:flex-col justify-center items-center gap-5 min-h-screen">
-      <div className="md:w-[30%]">
-        <FaBrain className="text-9xl text-indigo-500" />
-        <h1 className="bg-gradient-to-r from-indigo-500 via-pink-400 to-pink-500 text-transparent bg-clip-text text-6xl max-md:text-4xl font-semibold">
-          Quizly
-        </h1>
-      </div>
+       <div className="flex flex-col items-center md:w-[30%]">
+             <img src={appInfo.logo} className="w-60" alt="" />
+             <em>Take a quiz and earn!</em>
+           </div>
+     
       <div className="md:w-[30%]">
         <div className="bg-white shadow-lg rounded-lg p-6 text-center max-w-md w-full">
           <h1 className="text-2xl font-semibold text-gray-800">
@@ -78,8 +77,8 @@ const ForgotPassword: React.FC = () => {
                   type="submit"
                   className={`w-full py-2 px-4 rounded text-white font-medium ${
                     isLoading
-                      ? 'bg-gray-400'
-                      : 'bg-indigo-600 hover:bg-indigo-500'
+                      ? 'bg-[#E706E5] opacity-50 cursor-not-allowed'
+                      : 'bg-[#E706E5] hover:opacity-80'
                   } transition`}
                   disabled={isLoading}
                 >

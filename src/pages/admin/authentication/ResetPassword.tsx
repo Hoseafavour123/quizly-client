@@ -2,7 +2,7 @@ import React from 'react'
 
 import { Link, useSearchParams } from 'react-router-dom' // Assuming React Router is used
 import ResetAdminPasswordForm from './ResetPasswordForm'
-import { FaBrain } from 'react-icons/fa'
+import { appInfo } from '../../../constants/app.info'
 
 const ResetAdminPassword: React.FC = () => {
   const [searchParams] = useSearchParams()
@@ -15,13 +15,11 @@ const ResetAdminPassword: React.FC = () => {
 
   return (
     <div className="font-montserrat flex max-md:flex-col justify-center items-center gap-5 min-h-screen">
-      <div className="md:w-[30%]">
-        <FaBrain className="text-9xl text-indigo-500" />
-        <h1 className="bg-gradient-to-r from-indigo-500 via-pink-400 to-pink-500 text-transparent bg-clip-text text-6xl max-md:text-4xl font-semibold">
-          Quizly
-        </h1>
-        <p>Take a quiz and earn!</p>
-      </div>
+        <div className="flex flex-col items-center md:w-[30%]">
+              <img src={appInfo.logo} className="w-60" alt="" />
+              <em>Take a quiz and earn!</em>
+            </div>
+      
       <div className="md:w-[30%]">
         {linkIsValid ? (
           <ResetAdminPasswordForm code={code} />
@@ -39,7 +37,7 @@ const ResetAdminPassword: React.FC = () => {
 
                 <Link
                   to="/admin/password/forgot"
-                  className="mt-4 inline-block bg-indigo-500 hover:bg-indigo-600 text-white py-2 px-4 rounded transition"
+                  className="mt-4 inline-block bg-[#E706E5] hover:opacity-80 text-white py-2 px-4 rounded transition"
                 >
                   Request New Link
                 </Link>

@@ -2,7 +2,7 @@ import { Link, useParams } from 'react-router-dom'
 import { useQuery } from 'react-query'
 import * as apiAdmin from '../../../apiAdmin'
 import { AiOutlineCheckCircle, AiOutlineCloseCircle } from 'react-icons/ai'
-import { FaBrain } from 'react-icons/fa'
+import { appInfo } from '../../../constants/app.info'
 
 export type Activation = {
   otpString: string
@@ -19,13 +19,11 @@ const VerifyAdminEmail = () => {
 
   return (
     <div className="font-montserrat flex max-md:flex-col justify-center items-center gap-5 min-h-screen">
-      <div className="md:w-[30%]">
-        <FaBrain className="text-9xl text-indigo-500" />
-        <h1 className="bg-gradient-to-r from-indigo-500 via-pink-400 to-pink-500 text-transparent bg-clip-text text-6xl max-md:text-4xl font-semibold">
-          Quizly
-        </h1>
-        <p>Take a quiz and earn!</p>
-      </div>
+       <div className="flex flex-col items-center md:w-[30%]">
+             <img src={appInfo.logo} className="w-60" alt="" />
+             <em>Take a quiz and earn!</em>
+           </div>
+     
       <div className="md:w-[30%]">
         <div className="bg-white shadow-lg rounded-lg p-6 text-center max-w-sm w-full">
           {isLoading && (
