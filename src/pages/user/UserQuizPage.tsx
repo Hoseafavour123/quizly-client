@@ -50,7 +50,7 @@ const UserQuizPage = () => {
   const { showToast } = useAppContext()
   const { mutate } = useMutation(apiUser.submitQuiz, {
     onSuccess: () => {
-      navigate(`/my-quizzes`)
+      navigate(`/user/my-quizzes`)
     },
   })
 

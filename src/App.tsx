@@ -40,6 +40,7 @@ import Leaderboard from './pages/user/Leaderboard'
 import UpdateAdminProfile from './pages/admin/AdminEdit'
 import PaymentPage from './pages/user/PaymentPage'
 import PaymentStatusPage from './pages/user/VerifyPayment'
+import LandingPage from './pages/user/landing/LandingPage'
 
 function App() {
   return (
@@ -47,9 +48,10 @@ function App() {
       <AnimatePresence mode="wait">
         <Routes>
           <Route element={<AnimatedLayout />}>
+            <Route path="/" element={<LandingPage />} />
             {/* User Routes */}
             <Route
-              path="/"
+              path="/user"
               element={
                 <AuthProvider>
                   <UserContainer />
@@ -58,15 +60,15 @@ function App() {
             >
               <Route element={<MainUserLayout />}>
                 <Route index element={<UserHome />} />
-                <Route path="/profile" element={<UserProfile />} />
-                <Route path="/profile/edit" element={<UserEdit />} />
-                <Route path="/live-quiz" element={<UserQuizPage />} />
-                <Route path="/my-quizzes" element={<MyQuizzes />} />
-                <Route path="/statistics" element={<Statistics />} />
-                <Route path="/leaderboard" element={<Leaderboard />} />
-                <Route path="/user/settings" element={<UpdateUserProfile />} />
-                <Route path='/quiz/pay/:quizId' element={<PaymentPage/>} />
-                <Route path='/payment/verify' element={<PaymentStatusPage/>} />
+                <Route path="/user/profile" element={<UserProfile />} />
+                <Route path="/user/profile/edit" element={<UserEdit />} />
+                <Route path="/user/live-quiz" element={<UserQuizPage />} />
+                <Route path="/user/my-quizzes" element={<MyQuizzes />} />
+                <Route path="/user/statistics" element={<Statistics />} />
+                <Route path="/user/leaderboard" element={<Leaderboard />} />
+                <Route path="/user/user/settings" element={<UpdateUserProfile />} />
+                <Route path="/user/quiz/pay/:quizId" element={<PaymentPage />} />
+                <Route path="/user/payment/verify" element={<PaymentStatusPage />} />
               </Route>
             </Route>
 
@@ -105,7 +107,7 @@ function App() {
                   path="/admin/settings"
                   element={<UpdateAdminProfile />}
                 />
-                <Route path='/admin/leaderboard' element={<Leaderboard />} />
+                <Route path="/admin/leaderboard" element={<Leaderboard />} />
               </Route>
             </Route>
 

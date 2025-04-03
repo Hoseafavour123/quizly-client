@@ -1,7 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import {
   FaTimes,
-  FaBrain,
   FaTrophy,
   FaChartBar,
   FaCog,
@@ -27,7 +26,7 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
           {/* Sidebar Header */}
           <div className="flex justify-between items-center mb-10">
             <Link
-              to={'/'}
+              to={'/user'}
               className="text-3xl font-bold flex items-center gap-2"
             >
                                
@@ -45,25 +44,25 @@ const Sidebar = ({ isOpen, toggleSidebar }: SidebarProps) => {
             <p className="font-semibold text-lg mb-4">Main Menu</p>
             <div className="flex flex-col gap-4">
               <SidebarLink
-                to="/"
+                to="/user"
                 icon={<FaChartBar />}
                 label="Dashboard"
                 toggleSidebar={toggleSidebar}
               />
               <SidebarLink
-                to="/live-quiz"
+                to="/user/live-quiz"
                 icon={<FaBroadcastTower/>}
                 label="Live Quiz"
                 toggleSidebar={toggleSidebar}
               />
               <SidebarLink
-                to="/my-quizzes"
+                to="/user/my-quizzes"
                 icon={<FaQuestion />}
                 label="My Quizzes"
                 toggleSidebar={toggleSidebar}
               />
               <SidebarLink
-                to="/leaderboard"
+                to="/user/leaderboard"
                 icon={<FaTrophy />}
                 label="Leaderboard"
                 toggleSidebar={toggleSidebar}
