@@ -1,4 +1,4 @@
-import { Link} from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { FaEdit } from 'react-icons/fa'
 import DeleteQuizButton from './buttons/DeleteQuiz'
 import { useModal } from '../context/ModalContext'
@@ -19,10 +19,10 @@ const QuizCard = ({ quiz }: QuizCardProps) => {
       window.location.reload()
       console.log('Quiz is live')
     },
-    onError:(err: Error) => {
+    onError: (err: Error) => {
       showToast({ message: err.message, type: 'ERROR' })
       console.log(err.message)
-    }
+    },
   })
 
   const mutatePay = useMutation(apiAdmin.notifyUsersForPayment, {
@@ -30,10 +30,10 @@ const QuizCard = ({ quiz }: QuizCardProps) => {
       showToast({ message: 'Payment notification sent', type: 'SUCCESS' })
       window.location.reload()
     },
-    onError:(err: Error) => {
+    onError: (err: Error) => {
       showToast({ message: err.message, type: 'ERROR' })
       console.log(err.message)
-    }
+    },
   })
 
   const { showModal } = useModal()
@@ -60,7 +60,6 @@ const QuizCard = ({ quiz }: QuizCardProps) => {
       },
     })
   }
-
 
   return (
     <>
@@ -93,10 +92,22 @@ const QuizCard = ({ quiz }: QuizCardProps) => {
             </button>
           </div>
 
-          <div className={`${quiz.status !== 'draft' && 'hidden'} bg-black p-2 rounded-md flex items-center justify-center text-white`}>
-            <button onClick={openPaymentModal} className='bg-yellow-500 p-1 rounded-md text-white'>
+          <div
+            className={`${
+              quiz.status !== 'draft' && 'hidden'
+            } bg-black p-2 rounded-md flex items-center justify-center text-white`}
+          >
+            <button
+              onClick={openPaymentModal}
+              disabled={quiz.notificationSent}
+              className={`${
+                quiz.notificationSent ?'bg-green-400':'bg-yellow-500'
+              } p-1 rounded-md text-white`}
+            >
               {' '}
-              {quiz.status == 'draft' ? 'Notify for Payment' : <>{''}</>}
+              {quiz.status == 'draft' && quiz.notificationSent
+                ? 'Notification Sent'
+                : 'Notify users'}
             </button>
           </div>
         </div>
@@ -109,10 +120,12 @@ const QuizCard = ({ quiz }: QuizCardProps) => {
             to={`/admin/quiz-builder/${quiz._id}`}
             className="text-blue-500 mr-2"
           >
-            <FaEdit className="text-blue-500" />
+            {quiz.status == 'draft' && <FaEdit className="text-blue-500" />}
           </Link>
 
-          <DeleteQuizButton quizId={`${quiz._id}`} />
+          {quiz.status !== 'live' && (
+            <DeleteQuizButton quizId={`${quiz._id}`} />
+          )}
         </div>
       </div>
     </>

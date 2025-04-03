@@ -29,6 +29,7 @@ export type LeaderboardType = {
 }
 
 const API_BASE_URL = 'https://quizver-api.onrender.com'
+//const API_BASE_URL = 'http://localhost:4005'
 
 export const register = async (formData: RegisterFormData) => {
   const response = await fetch(`${API_BASE_URL}/auth/register`, {

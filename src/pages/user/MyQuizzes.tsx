@@ -30,6 +30,7 @@ const MyQuizzes = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {data.quizzes.map(
           (quiz: {
+            totalQuestions: ReactNode
             quizId: any
             _id: Key | null | undefined
             title:
@@ -82,7 +83,7 @@ const MyQuizzes = () => {
                 {quiz.score !== null ? (
                   <div className="flex items-center gap-2">
                     <FaStar className="text-yellow-400" />
-                    <span className="font-semibold">Score: {quiz?.score}%</span>
+                    <span className="font-semibold">Score: {quiz?.score} / {quiz?.totalQuestions}</span>
                   
                   </div>
                 ) : (

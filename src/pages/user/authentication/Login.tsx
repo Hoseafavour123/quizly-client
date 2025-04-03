@@ -1,6 +1,6 @@
 import React from 'react'
 import { useForm, SubmitHandler } from 'react-hook-form'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import * as apiClient from '../../../apiClient'
 import { useMutation } from 'react-query'
 import { useAppContext } from '../../../context/AppContext'
@@ -14,6 +14,9 @@ export interface LoginFormData {
 const Login: React.FC = () => {
   const { showToast } = useAppContext()
   const navigate = useNavigate()
+  const location = useLocation()
+  const redirectUrl = location.state?.redirectUrl || '/'
+
   const {
     register,
     handleSubmit,
@@ -22,7 +25,7 @@ const Login: React.FC = () => {
 
   const { mutate, isLoading } = useMutation(apiClient.login, {
     onSuccess: () => {
-      navigate('/', { replace: true })
+      navigate(redirectUrl, { replace: true })
     },
     onError: (err: Error) => {
       showToast({ message: err.message, type: 'ERROR' })

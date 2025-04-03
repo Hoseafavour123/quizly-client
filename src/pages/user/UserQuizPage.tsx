@@ -8,8 +8,10 @@ import NotAvailable from '../../components/NoAvailable'
 import Loader1 from '../../components/Loader1'
 import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../../context/AuthContext'
+import { useAppContext } from '../../context/AppContext'
 
 const socket = io('https://quizver-api.onrender.com', { transports: ['websocket'] })
+//const socket = io('http://localhost:4005', { transports: ['websocket'] })
 
 const UserQuizPage = () => {
  
@@ -35,6 +37,7 @@ const UserQuizPage = () => {
   const [timeLeft, setTimeLeft] = useState<number | null>(null)
   const [currentQuestion, setCurrentQuestion] = useState(0)
   const [score, setScore] = useState(0)
+  
   const [selectedAnswers, setSelectedAnswers] = useState<
     Record<number, string>
   >({})
@@ -43,7 +46,8 @@ const UserQuizPage = () => {
 
   const [quizStarted, setQuizStarted] = useState<boolean>(false)
   const [cheatingDetectionActive, setCheatingDetectionActive] = useState(false)
-
+  
+  const { showToast } = useAppContext()
   const { mutate } = useMutation(apiUser.submitQuiz, {
     onSuccess: () => {
       navigate(`/my-quizzes`)
@@ -109,13 +113,13 @@ const UserQuizPage = () => {
     if (!cheatingDetectionActive) return
 
     const handleResize = () => {
-      console.log('🚨 Cheating detected: Window resized!')
+     showToast({message: 'Cheating detected: Window resized!', type: 'ERROR'})
       handleSubmit()
     }
 
     const handleVisibilityChange = () => {
       if (document.hidden) {
-        console.log('🚨 Cheating detected: Tab switched!')
+        showToast({message: 'Cheating detected: Tab hidden!', type: 'ERROR'})
         handleSubmit()
       }
     }
@@ -149,35 +153,36 @@ const UserQuizPage = () => {
   }
 
   const handleSubmit = () => {
-  const payload = {
-    userId: user?._id,
-    quizId: quiz._id,
-    totalQuestions: quiz.questions.length,
-    answers: {} as Record<string, string>,
-    score: 0,
-  }
-
-  let correctCount = 0
-  quiz.questions.forEach((q: any, i: number) => {
-    const selectedOption = selectedAnswers[i] || '' // Ensure a default value
-    const correctOptionLetter = getOptionLetter(i, q.correctAnswer)
-    const selectedOptionLetter = getOptionLetter(i, selectedOption)
-
-    if (correctOptionLetter === selectedOptionLetter) {
-      correctCount++
+    const payload = {
+      userId: user?._id,
+      quizId: quiz._id,
+      totalQuestions: quiz.questions.length,
+      answers: {} as Record<string, string>,
+      score: 0,
     }
 
-    payload.answers[i] = selectedOptionLetter || ''
-  })
+    let correctCount = 0
 
-  payload.score = correctCount
-  setScore(payload.score)
+    quiz.questions.forEach((q: any, i: number) => {
+      const selectedOption = selectedAnswers[i] || '' // Ensure a default value
+      const selectedOptionLetter = getOptionLetter(i, selectedOption) // Get the letter for the selected option
 
-  mutate(payload)
+      if (selectedOptionLetter === q.correctAnswer) {
+        correctCount++
+      }
 
-  sessionStorage.setItem('quizSubmitted', 'true')
-  setShowResults(true)
-}
+      payload.answers[i] = selectedOptionLetter || ''
+    })
+
+    payload.score = correctCount
+    setScore(payload.score)
+    console.log('Submitting quiz:', payload)
+
+    mutate(payload)
+
+    sessionStorage.setItem('quizSubmitted', 'true')
+    setShowResults(true)
+  }
 
 
   const formatTime = (seconds: number | null) => {
@@ -197,7 +202,33 @@ const UserQuizPage = () => {
   }
 
   if (isLoading || isPaidQuizLoading) return <Loader1 />
+
+
+   if (paidQuiz?.isQuizPaidFor && !quiz) {
+     return (
+       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-900 to-purple-600 text-white p-6">
+         <motion.div
+           initial={{ opacity: 0, y: 50 }}
+           animate={{ opacity: 1, y: 0 }}
+           transition={{ duration: 0.8 }}
+           className="max-w-lg w-full bg-white text-gray-900 shadow-2xl rounded-2xl p-8 relative overflow-hidden"
+         >
+           <h1 className="text-3xl font-bold text-center mb-4">
+             Quiz Not Available, please wait! 🚫
+           </h1>
+           <p className="text-center text-gray-700 mb-6">
+             The quiz is not available at the moment.
+           </p>
+         </motion.div>
+       </div>
+     )
+   }
+
+
   if ((error && quiz) || !quiz) return <NotAvailable />
+
+
+ 
 
   if (!paidQuiz.isQuizPaidFor && quiz) {
     return (
