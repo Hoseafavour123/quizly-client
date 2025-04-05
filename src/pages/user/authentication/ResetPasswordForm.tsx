@@ -41,7 +41,7 @@ const ResetPasswordForm = ({ code }: ResetPasswordFormProps) => {
   return (
     <div className="bg-white shadow-lg rounded-lg p-6 text-center max-w-md w-full">
       <h1 className="text-2xl font-semibold text-gray-800">Reset Password</h1>
-      {!isSuccess ? (
+      {isSuccess ? (
         <div className="flex justify-center items-center bg-gray-100">
           <div className="bg-white p-6 text-center w-full">
             <h1 className="text-xl font-semibold text-green-600">

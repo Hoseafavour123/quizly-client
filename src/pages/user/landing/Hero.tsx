@@ -17,7 +17,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
-            className="text-5xl font-extrabold tracking-tight mb-6 leading-tight"
+            className="text-5xl max-md:text-3xl font-extrabold tracking-tight mb-6 leading-tight"
           >
             The Ultimate Quiz <br />
             Experience with <span className="text-yellow-400">Quizver</span> 🚀
@@ -28,7 +28,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="text-lg opacity-80 mb-8"
+            className="text-lg max-md:text-md opacity-80 mb-8"
           >
             Test your knowledge, compete with friends, and climb the
             leaderboard. Fun, challenging, and rewarding quizzes await you!
@@ -57,7 +57,7 @@ export default function HeroSection() {
           className="md:w-1/2 flex justify-center mt-10 md:mt-0 relative"
         >
           {/* Glow Effect Behind Mascot */}
-          <div className="absolute inset-0 w-72 h-72 bg-yellow-400 opacity-20 rounded-full blur-3xl"></div>
+          <div className="max-md:mb-8 max-md:pb-3 absolute inset-0 w-72 h-72 bg-yellow-400 opacity-20 rounded-full blur-3xl"></div>
 
           {/* Mascot Image */}
           <img

@@ -66,7 +66,7 @@ function App() {
                 <Route path="/user/my-quizzes" element={<MyQuizzes />} />
                 <Route path="/user/statistics" element={<Statistics />} />
                 <Route path="/user/leaderboard" element={<Leaderboard />} />
-                <Route path="/user/user/settings" element={<UpdateUserProfile />} />
+                <Route path="/user/settings" element={<UpdateUserProfile />} />
                 <Route path="/user/quiz/pay/:quizId" element={<PaymentPage />} />
                 <Route path="/user/payment/verify" element={<PaymentStatusPage />} />
               </Route>

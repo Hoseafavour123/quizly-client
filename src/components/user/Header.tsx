@@ -21,7 +21,10 @@ const Header = ({ toggleSidebar }: { toggleSidebar: () => void }) => {
       </div>
 
       <div className="flex items-center gap-4">
-        <NotificationsPopover />
+        <div className='hidden'>
+          <NotificationsPopover />
+        </div>
+
         <AvatarPopover />
       </div>
     </div>

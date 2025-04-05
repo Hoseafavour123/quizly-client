@@ -78,7 +78,7 @@ const PaymentPage = () => {
             initial={{ scale: 0.9 }}
             animate={{ scale: 1 }}
             transition={{
-              duration: 0.5,
+              duration: 0.3,
               repeat: Infinity,
               repeatType: 'reverse',
             }}

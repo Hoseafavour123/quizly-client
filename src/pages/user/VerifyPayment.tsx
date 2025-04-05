@@ -21,7 +21,7 @@ const PaymentStatusPage = () => {
     } // Only run if reference is available
   )
 
-  let status: 'loading' | 'success' | 'failed' = 'loading'
+  let status: 'loading' | 'success' | 'failed'
   let message = 'Verifying payment...'
 
   if (isLoading) {

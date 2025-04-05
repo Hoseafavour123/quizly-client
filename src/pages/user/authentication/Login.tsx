@@ -75,7 +75,7 @@ const Login: React.FC = () => {
               </p>
             )}
           </div>
-          <p className=" text-sm text-right text-indigo-500">
+          <p className="text-sm text-right text-indigo-500">
             <Link to={'/password/forgot'}>Forgot password?</Link>
           </p>
           <button

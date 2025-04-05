@@ -178,10 +178,15 @@ const UserQuizPage = () => {
     setScore(payload.score)
     console.log('Submitting quiz:', payload)
 
-    mutate(payload)
+   const submitted = sessionStorage.getItem('quizSubmitted')
+    if (!submitted) {
+      mutate(payload)
+       sessionStorage.setItem('quizSubmitted', 'true')
+       setShowResults(true)
+    }
+   
 
-    sessionStorage.setItem('quizSubmitted', 'true')
-    setShowResults(true)
+   
   }
 
 
@@ -201,7 +206,7 @@ const UserQuizPage = () => {
     return ['A', 'B', 'C', 'D'][letterIndex] || '?'
   }
 
-  if (isLoading || isPaidQuizLoading) return <Loader1 />
+  if (isLoading) return <Loader1 />
 
 
    if (paidQuiz?.isQuizPaidFor && !quiz) {
@@ -312,7 +317,7 @@ const UserQuizPage = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => window.location.reload()}
-          className="mt-6 px-6 py-3 bg-indigo-600 text-white rounded-full font-semibold shadow-md hover:bg-indigo-700"
+          className="hidden mt-6 px-6 py-3 bg-indigo-600 text-white rounded-full font-semibold shadow-md hover:bg-indigo-700"
         >
           Try Again 🔄
         </motion.button>
