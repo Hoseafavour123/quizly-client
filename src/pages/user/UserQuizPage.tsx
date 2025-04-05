@@ -26,7 +26,7 @@ const UserQuizPage = () => {
     refetchInterval: 30000,
   })
 
-  const { data: paidQuiz, isLoading:isPaidQuizLoading } = useQuery({
+  const { data: paidQuiz } = useQuery({
     queryKey: ['isQuizPaidFor'],
     queryFn: () => apiAdmin.isQuizPaidFor(quiz?._id!),
     enabled: !!quiz?._id,
