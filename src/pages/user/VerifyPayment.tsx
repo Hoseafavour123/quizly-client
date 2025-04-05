@@ -16,7 +16,7 @@ const PaymentStatusPage = () => {
       enabled: !!reference,
       retry: false,
       onSuccess: () => {
-        navigate('/live-quiz', { replace: true })
+        navigate('/user/live-quiz', { replace: true })
       },
     } // Only run if reference is available
   )
@@ -56,10 +56,10 @@ const PaymentStatusPage = () => {
           }}
           className="text-5xl mb-4"
         >
-          {status === 'success' ? '🎉' : '❌'}
+          {status === 'success' && '🎉'}
         </motion.div>
         <h1 className="text-2xl font-bold mb-2">
-          {status === 'success' ? 'Payment Successful' : 'Payment Failed'}
+          {status === 'success' && 'Payment Successful'}
         </h1>
         <p className="text-gray-700 mb-6">{message}</p>
         <button
