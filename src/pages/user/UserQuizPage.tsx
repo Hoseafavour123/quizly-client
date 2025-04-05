@@ -26,7 +26,7 @@ const UserQuizPage = () => {
     refetchInterval: 30000,
   })
 
-  const { data: paidQuiz } = useQuery({
+  const { data: paidQuiz, isLoading:isPaidQuizLoading } = useQuery({
     queryKey: ['isQuizPaidFor'],
     queryFn: () => apiAdmin.isQuizPaidFor(quiz?._id!),
     enabled: !!quiz?._id,
@@ -178,15 +178,10 @@ const UserQuizPage = () => {
     setScore(payload.score)
     console.log('Submitting quiz:', payload)
 
-   const submitted = sessionStorage.getItem('quizSubmitted')
-    if (!submitted) {
-      mutate(payload)
-       sessionStorage.setItem('quizSubmitted', 'true')
-       setShowResults(true)
-    }
-   
+    mutate(payload)
 
-   
+    sessionStorage.setItem('quizSubmitted', 'true')
+    setShowResults(true)
   }
 
 
@@ -206,7 +201,7 @@ const UserQuizPage = () => {
     return ['A', 'B', 'C', 'D'][letterIndex] || '?'
   }
 
-  if (isLoading) return <Loader1 />
+  if (isLoading || isPaidQuizLoading) return <Loader1 />
 
 
    if (paidQuiz?.isQuizPaidFor && !quiz) {
@@ -317,7 +312,7 @@ const UserQuizPage = () => {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           onClick={() => window.location.reload()}
-          className="hidden mt-6 px-6 py-3 bg-indigo-600 text-white rounded-full font-semibold shadow-md hover:bg-indigo-700"
+          className="mt-6 px-6 py-3 bg-indigo-600 text-white rounded-full font-semibold shadow-md hover:bg-indigo-700"
         >
           Try Again 🔄
         </motion.button>
