@@ -1,7 +1,6 @@
 import { Link, useLocation } from 'react-router-dom'
 import {
   FaTimes,
-  FaBrain,
   FaTrophy,
   FaChartBar,
   FaCog,
