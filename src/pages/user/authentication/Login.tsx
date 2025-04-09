@@ -15,7 +15,7 @@ const Login: React.FC = () => {
   const { showToast } = useAppContext()
   const navigate = useNavigate()
   const location = useLocation()
-  const redirectUrl = location.state?.redirectUrl || '/'
+  const redirectUrl = location.state?.redirectUrl || '/user'
 
   const {
     register,

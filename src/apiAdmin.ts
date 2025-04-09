@@ -28,8 +28,8 @@ export type QuizzesReturnType = {
   updatedAt: Date
 }
 
-const API_BASE_URL = "https://quizver-api.onrender.com"
-//const API_BASE_URL = "http://localhost:4005"
+//const API_BASE_URL =  "https://quizver-api.onrender.com"
+const API_BASE_URL = "http://localhost:4005"
 
 
 export const registerAdmin = async (formData: RegisterFormData) => {
@@ -379,4 +379,31 @@ export const isQuizPaidFor = async (quizId: string) => {
     throw new Error(errorMessage)
   }
   return response.json()
+}
+
+
+export const scheduleQuiz = async ({ quizId, hours }: { quizId: string; hours: number }) => {
+  const response = await fetch(`${API_BASE_URL}/quiz/schedule/${quizId}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ hours }),
+    credentials: 'include',
+  })
+
+   if (!response.ok) {
+     // Try to parse error message from response
+     let errorMessage = 'Failed to schedule quiz' 
+
+     try {
+       const errorData = await response.json() 
+       errorMessage = errorData.message || errorMessage 
+     } catch (error) {
+       console.error('Error parsing response:', error)
+     }
+
+     throw new Error(errorMessage)
+   }
+   return response.json()
 }

@@ -10,8 +10,8 @@ import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../../context/AuthContext'
 import { useAppContext } from '../../context/AppContext'
 
-const socket = io('https://quizver-api.onrender.com', { transports: ['websocket'] })
-//const socket = io('http://localhost:4005', { transports: ['websocket'] })
+//const socket = io('https://quizver-api.onrender.com', { transports: ['websocket'] })
+const socket = io('http://localhost:4005', { transports: ['websocket'] })
 
 const UserQuizPage = () => {
  
