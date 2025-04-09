@@ -11,7 +11,7 @@ import { useAuthContext } from '../../context/AuthContext'
 import { useAppContext } from '../../context/AppContext'
 
 //const socket = io('http://localhost:4005', { transports: ['websocket'] })
-const socket = io('https://quiz-api-1.onrender.com', { transports: ['websocket'] })
+const socket = io('https://quizver-api.onrender.com', { transports: ['websocket'] })
 
 const UserQuizPage = () => {
   const {
