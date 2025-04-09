@@ -10,30 +10,26 @@ import { useNavigate } from 'react-router-dom'
 import { useAuthContext } from '../../context/AuthContext'
 import { useAppContext } from '../../context/AppContext'
 
+const socket = io('https://quizver-api.onrender.com', {
+  transports: ['websocket'],
+})
 //const socket = io('http://localhost:4005', { transports: ['websocket'] })
-const socket = io('https://quizver-api.onrender.com', { transports: ['websocket'] })
 
 const UserQuizPage = () => {
   const {
     data: quiz,
     isLoading,
+    error,
     refetch,
   } = useQuery({
     queryKey: ['liveQuiz'],
-    queryFn: () => apiUser.getLiveQuiz(),
+    queryFn: apiUser.getLiveQuiz,
     refetchInterval: 30000,
   })
 
   const { data: paidQuiz, isLoading: isPaidQuizLoading } = useQuery({
     queryKey: ['isQuizPaidFor'],
     queryFn: () => apiAdmin.isQuizPaidFor(quiz?._id!),
-    onSuccess(data) {
-      console.log(data)
-    },
-    onError(err: Error) {
-      showToast({ message: err.message, type: 'ERROR' })
-      console.log(err.message)
-    },
     enabled: !!quiz?._id,
   })
 
@@ -71,44 +67,28 @@ const UserQuizPage = () => {
 
   useEffect(() => {
     const submitted = sessionStorage.getItem('quizSubmitted')
-    if (submitted) {
-      setShowResults(true)
-      sessionStorage.removeItem('quizSubmitted')
-    }
+    if (submitted) setShowResults(true)
   }, [])
 
-  // Adjusted Timer logic: Start quiz when scheduled time is reached and ensure it lasts for the duration
   useEffect(() => {
-    if (quiz?.duration && quiz?.scheduledTime) {
-      const startTime = new Date(quiz.scheduledTime).getTime()
-      const endTime = startTime + quiz.duration * 60 * 1000
-
-      // Check if the quiz should start
-      const checkIfStarted = () => {
-        const now = Date.now()
-        if (now >= startTime && !quizStarted) {
-          setQuizStarted(true)
-        }
-      }
-
-      // Update the time remaining every second
+    if (quiz?.startTime && quiz?.duration) {
+      const endTime =
+        new Date(quiz.startTime).getTime() + quiz.duration * 60 * 1000
       const updateTimer = () => {
-        const now = Date.now()
-        const remainingTime = Math.max(0, Math.floor((endTime - now) / 1000))
-        setTimeLeft(remainingTime)
-
-        if (remainingTime <= 0) {
-          setShowResults(true)
-        }
+        const remaining = Math.max(0, Math.floor((endTime - Date.now()) / 1000))
+        setTimeLeft(remaining)
+        if (remaining === 0) setShowResults(true)
       }
 
-      checkIfStarted()
+      updateTimer()
       const interval = setInterval(updateTimer, 1000)
-
       return () => clearInterval(interval)
     }
-  }, [quiz, quizStarted])
+  }, [quiz])
 
+  /// CHEATING CONTROL
+
+  // Function to start the quiz properly
   const startQuiz = () => {
     setQuizStarted(true)
 
@@ -118,12 +98,14 @@ const UserQuizPage = () => {
     }, 10000) // 10 seconds
   }
 
+  // Call `startQuiz` when the user clicks "Start Quiz"
   useEffect(() => {
-    if ((quiz?.questions?.length ?? 0) > 0 && !quizStarted) {
+    if (quiz?.questions?.length > 0 && !quizStarted) {
       startQuiz() // Ensures the detection starts after user interaction
     }
   }, [quiz?.questions])
 
+  // Start cheat detection **only if the timer has activated**
   useEffect(() => {
     if (!cheatingDetectionActive) return
 
@@ -152,13 +134,14 @@ const UserQuizPage = () => {
   }, [cheatingDetectionActive])
 
   const handleSelectAnswer = (questionIndex: number, answer: string) => {
+    console.log('Selected answer:', answer, questionIndex)
     const updatedAnswers = { ...selectedAnswers }
     updatedAnswers[questionIndex] = answer
     setSelectedAnswers(updatedAnswers)
   }
 
   const handleNext = () => {
-    if (quiz?.questions && currentQuestion < quiz.questions.length - 1) {
+    if (currentQuestion < quiz.questions.length - 1) {
       setCurrentQuestion(currentQuestion + 1)
     }
   }
@@ -172,17 +155,17 @@ const UserQuizPage = () => {
   const handleSubmit = () => {
     const payload = {
       userId: user?._id,
-      quizId: quiz?._id,
-      totalQuestions: quiz?.questions.length,
+      quizId: quiz._id,
+      totalQuestions: quiz.questions.length,
       answers: {} as Record<string, string>,
       score: 0,
     }
 
     let correctCount = 0
 
-    quiz?.questions.forEach((q: any, i: number) => {
+    quiz.questions.forEach((q: any, i: number) => {
       const selectedOption = selectedAnswers[i] || '' // Ensure a default value
-      const selectedOptionLetter = getOptionLetter(i, selectedOption)
+      const selectedOptionLetter = getOptionLetter(i, selectedOption) // Get the letter for the selected option
 
       if (selectedOptionLetter === q.correctAnswer) {
         correctCount++
@@ -193,6 +176,7 @@ const UserQuizPage = () => {
 
     payload.score = correctCount
     setScore(payload.score)
+    console.log('Submitting quiz:', payload)
 
     mutate(payload)
 
@@ -211,18 +195,36 @@ const UserQuizPage = () => {
   }
 
   const getOptionLetter = (questionIndex: number, optionText: string) => {
-    const options = quiz?.questions[questionIndex].options as string[]
-    const letterIndex = (options ?? []).indexOf(optionText)
+    const options = quiz.questions[questionIndex].options
+    const letterIndex = options.indexOf(optionText)
     return ['A', 'B', 'C', 'D'][letterIndex] || '?'
   }
 
   if (isLoading || isPaidQuizLoading) return <Loader1 />
 
   if (paidQuiz?.isQuizPaidFor && !quiz) {
-    return <NotAvailable />
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-900 to-purple-600 text-white p-6">
+        <motion.div
+          initial={{ opacity: 0, y: 50 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
+          className="max-w-lg w-full bg-white text-gray-900 shadow-2xl rounded-2xl p-8 relative overflow-hidden"
+        >
+          <h1 className="text-3xl font-bold text-center mb-4">
+            Quiz Not Available, please wait! 🚫
+          </h1>
+          <p className="text-center text-gray-700 mb-6">
+            The quiz is not available at the moment.
+          </p>
+        </motion.div>
+      </div>
+    )
   }
 
-  if (!paidQuiz?.isQuizPaidFor && quiz) {
+  if ((error && quiz) || !quiz) return <NotAvailable />
+
+  if (!paidQuiz.isQuizPaidFor && quiz) {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-900 to-purple-600 text-white p-6">
         <motion.div
@@ -248,43 +250,24 @@ const UserQuizPage = () => {
     )
   }
 
-  if (quiz?.status === 'closed') {
-    return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-900 to-purple-600 text-white p-6">
-        <motion.div
-          initial={{ opacity: 0, y: 50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-          className="max-w-lg w-full bg-white text-gray-900 shadow-2xl rounded-2xl p-8 relative overflow-hidden"
-        >
-          <h1 className="text-3xl font-bold text-center mb-4">
-            Quiz Closed! ❌
-          </h1>
-          <p className="text-center text-gray-700 mb-6">
-            This quiz is no longer available.
-          </p>
-        </motion.div>
-      </div>
-    )
-  }
-
   if (showResults) {
-    const totalQuestions = quiz?.questions.length || 0
-    const percentage = ((score / totalQuestions) * 100).toFixed(2)
+    const totalQuestions = quiz.questions.length
+    const percentage = Math.round((score / totalQuestions) * 100)
 
+    // Performance Rating
     let performanceText = ''
     let emoji = ''
     let color = ''
 
-    if (Number(percentage) >= 90) {
+    if (percentage >= 90) {
       performanceText = 'Excellent! 🎯🔥'
       emoji = '🏆'
       color = 'text-green-600'
-    } else if (Number(percentage) >= 70) {
+    } else if (percentage >= 70) {
       performanceText = 'Great Job! 🎉'
       emoji = '👏'
       color = 'text-blue-600'
-    } else if (Number(percentage) >= 50) {
+    } else if (percentage >= 50) {
       performanceText = 'Good Effort! 💪'
       emoji = '🙂'
       color = 'text-yellow-600'
@@ -307,24 +290,26 @@ const UserQuizPage = () => {
         <motion.div
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: 0.4, ease: 'easeOut' }}
+          className="mt-6 bg-gray-100 p-6 rounded-lg shadow-inner"
         >
-          <p className={`${color} text-lg font-medium my-4`}>
+          <p className="text-xl font-semibold">Your Score:</p>
+          <p className="text-4xl font-bold text-indigo-600 mt-2">
+            {score} / {totalQuestions}
+          </p>
+          <p className={`mt-4 text-lg font-semibold ${color}`}>
             {performanceText}
           </p>
-          <p className="text-xl font-bold">
-            Your Score: {score}/{quiz?.questions.length}
-          </p>
-          <p className="hidden text-md text-gray-600 mt-4">
-            Percentage: {percentage}%
-          </p>
-          <button
-            onClick={() => navigate(`/user/my-quizzes`)}
-            className="mt-6 px-6 py-2 bg-gray-800 text-white rounded-full hover:bg-gray-900"
-          >
-            Back to Quizzes
-          </button>
         </motion.div>
+
+        <motion.button
+          whileHover={{ scale: 1.05 }}
+          whileTap={{ scale: 0.95 }}
+          onClick={() => window.location.reload()}
+          className="mt-6 px-6 py-3 bg-indigo-600 text-white rounded-full font-semibold shadow-md hover:bg-indigo-700"
+        >
+          Try Again 🔄
+        </motion.button>
       </motion.div>
     )
   }
@@ -332,100 +317,64 @@ const UserQuizPage = () => {
   const question = quiz.questions[currentQuestion]
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-indigo-900 to-purple-600 text-white p-6">
-      <motion.div
-        initial={{ opacity: 0, y: 50 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.8 }}
-        className="max-w-4xl w-full bg-white text-gray-900 shadow-2xl rounded-2xl p-8 relative overflow-hidden"
-      >
-        <div>
-          <h1 className="text-4xl font-bold text-center mb-6">
-            Start the Quiz!
-          </h1>
-          <div className="text-center">
-            {quizStarted ? (
-              <>
-                <p className="text-lg font-semibold text-gray-600 mb-2">
-                  Time Remaining: {formatTime(timeLeft)}
-                </p>
-                <motion.div
-                  initial={{ x: 300, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  className="max-w-lg mx-auto p-4 bg-white rounded-lg shadow-lg"
-                >
-                  <h1 className="text-2xl font-bold mb-4">{quiz.title} 🏆</h1>
-                  <p className="text-gray-600">
-                    Time Left: {formatTime(timeLeft)}
-                  </p>
-                  <div className="mt-4 p-4 bg-gray-100 rounded-lg">
-                    <h2 className="font-semibold">
-                      Q{currentQuestion + 1}. {question.text}
-                    </h2>
-                    {question.options.map((option: string, i: number) => (
-                      <motion.button
-                        key={i}
-                        className={`block mt-2 p-2 w-full text-left border rounded transition ${
-                          selectedAnswers[currentQuestion] === option
-                            ? 'bg-blue-300'
-                            : 'hover:bg-blue-100'
-                        }`}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        onClick={() =>
-                          handleSelectAnswer(currentQuestion, option)
-                        }
-                      >
-                        ({getOptionLetter(currentQuestion, option)}) {option}
-                      </motion.button>
-                    ))}
-                  </div>
+    <motion.div
+      initial={{ x: 300, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      className="max-w-lg mx-auto p-4 bg-white rounded-lg shadow-lg"
+    >
+      <h1 className="text-2xl font-bold mb-4">{quiz.title} 🏆</h1>
+      <p className="text-gray-600">Time Left: {formatTime(timeLeft)}</p>
+      <div className="mt-4 p-4 bg-gray-100 rounded-lg">
+        <h2 className="font-semibold">
+          Q{currentQuestion + 1}. {question.text}
+        </h2>
+        {question.options.map((option: string, i: number) => (
+          <motion.button
+            key={i}
+            className={`block mt-2 p-2 w-full text-left border rounded transition ${
+              selectedAnswers[currentQuestion] === option
+                ? 'bg-blue-300'
+                : 'hover:bg-blue-100'
+            }`}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => handleSelectAnswer(currentQuestion, option)}
+          >
+            ({getOptionLetter(currentQuestion, option)}) {option}
+          </motion.button>
+        ))}
+      </div>
 
-                  <div className="flex justify-between mt-4">
-                    <motion.button
-                      className="p-2 bg-gray-200 rounded"
-                      onClick={handlePrev}
-                      disabled={currentQuestion === 0}
-                      whileHover={{ scale: 1.1 }}
-                    >
-                      ⬅ Prev
-                    </motion.button>
-                    {currentQuestion < quiz.questions.length - 1 && (
-                      <motion.button
-                        className="p-2 bg-blue-500 text-white rounded"
-                        onClick={handleNext}
-                        whileHover={{ scale: 1.1 }}
-                      >
-                        Next ➡
-                      </motion.button>
-                    )}
-                  </div>
+      <div className="flex justify-between mt-4">
+        <motion.button
+          className="p-2 bg-gray-200 rounded"
+          onClick={handlePrev}
+          disabled={currentQuestion === 0}
+          whileHover={{ scale: 1.1 }}
+        >
+          ⬅ Prev
+        </motion.button>
+        {currentQuestion < quiz.questions.length - 1 && (
+          <motion.button
+            className="p-2 bg-blue-500 text-white rounded"
+            onClick={handleNext}
+            whileHover={{ scale: 1.1 }}
+          >
+            Next ➡
+          </motion.button>
+        )}
+      </div>
 
-                  {currentQuestion === quiz.questions.length - 1 && (
-                    <motion.button
-                      className="p-2 bg-green-500 text-white rounded mt-4"
-                      onClick={handleSubmit}
-                      whileHover={{ scale: 1.1 }}
-                    >
-                      ✅ Submit Quiz
-                    </motion.button>
-                  )}
-                </motion.div>
-              </>
-            ) : (
-              <div>
-                <p className="text-2xl font-bold text-center mt-6">
-                  Waiting for quiz to start...
-                </p>
-                <p className="text-lg font-semibold text-gray-600 mb-2">
-                  Starting in: {formatTime(timeLeft)}
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-      </motion.div>
-    </div>
+      {currentQuestion === quiz.questions.length - 1 && (
+        <motion.button
+          className="p-2 bg-green-500 text-white rounded mt-4"
+          onClick={handleSubmit}
+          whileHover={{ scale: 1.1 }}
+        >
+          ✅ Submit Quiz
+        </motion.button>
+      )}
+    </motion.div>
   )
 }
 
