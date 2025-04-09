@@ -87,7 +87,7 @@ const QuizCard = ({ quiz }: QuizCardProps) => {
                 : 'bg-gray-500'
             } p-1 rounded-md text-white`}
           >
-            {quiz.status == 'draft' && 'Schedule Quiz'}
+            {quiz.status == 'draft' && !scheduleQuiz.isLoading && 'Schedule Quiz'}
             {quiz.status == 'live' && 'Active'}
             {quiz.status == 'scheduled' && 'Scheduled'}
             {quiz.status == 'closed' && 'Closed'}

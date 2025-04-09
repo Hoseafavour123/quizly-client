@@ -12,6 +12,7 @@ type AdminReturnType = {
 }
 
 export type QuizzesReturnType = {
+  scheduledTime: string | undefined
   _id: string
   title: string
   description: string
@@ -28,8 +29,8 @@ export type QuizzesReturnType = {
   updatedAt: Date
 }
 
-//const API_BASE_URL =  "https://quizver-api.onrender.com"
-const API_BASE_URL = "http://localhost:4005"
+const API_BASE_URL =  "https://quizver-api.onrender.com"
+//const API_BASE_URL = "http://localhost:4005"
 
 
 export const registerAdmin = async (formData: RegisterFormData) => {
